@@ -129,6 +129,11 @@ RUN apt-get install -y tree \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
 
+SHELL ["pwsh", "-c"]
+RUN Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force; \
+    Import-Module posh-git; \
+    Add-PoshGitToProfile -AllUsers -AllHosts;
+
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
 CMD [ "pwsh" ]
