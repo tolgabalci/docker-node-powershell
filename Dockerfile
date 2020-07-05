@@ -133,6 +133,7 @@ SHELL ["pwsh", "-c"]
 RUN Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force; \
     Import-Module posh-git; \
     Add-PoshGitToProfile -AllUsers -AllHosts;
+SHELL ["/bin/sh", "-c"]
 
 # Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
