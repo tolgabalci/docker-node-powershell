@@ -130,9 +130,31 @@ RUN apt-get install -y tree \
     && rm -rf /var/lib/apt/lists/*
 
 SHELL ["pwsh", "-c"]
+# Install Posh-Git
 RUN Install-Module posh-git -Scope CurrentUser -AllowPrerelease -Force; \
     Import-Module posh-git; \
-    Add-PoshGitToProfile -AllUsers -AllHosts;
+    Add-PoshGitToProfile -AllUsers -AllHosts; \
+    $script = { \
+    #
+    # Configure PSReadline
+    $colors = @{ \
+    # Below colors are the two integers separated with semicolon "[FF;BBm" (FF = foreground ; BB = background)
+    "Selection" = "$([char]0x1b)[30;47m" \
+    }; \ 
+    Set-PSReadLineOption -Colors $colors; \
+    Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete; \
+    Set-PSReadlineOption -ShowToolTips; \
+    Set-PSReadlineKeyHandler -Key Ctrl+LeftArrow -Function BackwardWord; \
+    Set-PSReadlineKeyHandler -Key Ctrl+RightArrow -Function NextWord; \
+    Set-PSReadlineKeyHandler -Key Shift+LeftArrow -Function SelectBackwardChar; \
+    Set-PSReadlineKeyHandler -Key Shift+RightArrow -Function SelectForwardChar; \
+    Set-PSReadlineKeyHandler -Key Ctrl+Shift+LeftArrow -Function SelectBackwardWord; \
+    Set-PSReadlineKeyHandler -Key Ctrl+Shift+RightArrow -Function SelectNextWord ; \
+    Set-PSReadlineKeyHandler -Key Ctrl+a -Function SelectAll; \
+    Set-PSReadlineKeyHandler -Key Ctrl+Shift+Home -Function SelectBackwardsLine ; \
+    Set-PSReadlineKeyHandler -Key Ctrl+Shift+End -Function SelectLine ; \
+    }; \
+    $script.ToString() >> $PROFILE.AllUsersAllHosts
 SHELL ["/bin/sh", "-c"]
 
 # Use PowerShell as the default shell
